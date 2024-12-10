@@ -9,6 +9,10 @@
 # https://www.spectralpython.net
 # https://www.geeksforgeeks.org/command-line-arguments-in-python/
 
+# Note that if you use the default output file, this will be in the
+# same directory as the script is run --- if you need to specify a
+# different location, use the -o/--Output option to give the path.
+
 import sys
 import getopt
 import spectral as sp
@@ -27,40 +31,50 @@ def displayHelp():
 
 
 def main():
+    # Set flags
+    help = False
+    inputFile = False
+    outputFile = False
     # Drop the filename from the list of command line arguments
     argList = sys.argv[1:]
 
-    # We support help, convert and output
-    options = "hco:"
+    # We support help, convert and output. Convert and output have
+    # associated values.
+    options = "hc:o:"
 
-    # Long options
-    long_options = ["Help", "Convert", "Output"]
+    # Long options. Again Convert and Output take values.
+    long_options = ["Help", "Convert=", "Output="]
 
     try:
         # Parsing argument
         arguments, values = getopt.getopt(argList, options, long_options)
-    
-        # checking each argument. Note that the -o option does not
-        # currently work. The structure below works for arguments that
-        # are alternatives, so doesn't allow -c to be used both on its
-        # own and with another flag to set the output file.
+
+        # Checking each argument. Note that currentValue is only
+        # instantiated if the argument was previosuly specified to
+        # take a value.
         for currentArgument, currentValue in arguments:
             if currentArgument in ("-h", "--Help"):
+                help = True
                 displayHelp()
             
             elif currentArgument in ("-c", "--Convert"):
-               fileName = argList[-1]
-               adjustedImage = utils.gainAdjustFile(fileName)
+                inputFile = True
+                fileName = currentValue
                
-               if currentArgument in ("-o", "--Output"):
-                   outName = argList[-1]
-                   utils.outputFile(outName, adjustedImage)
-               else:
-                   utils.outputFile(fileName[:-4] + '-gain-adjusted.hdr', adjustedImage)
+            elif currentArgument in ("-o", "--Output"):
+                outputFile = True
+                outName = currentValue
 
-                   
-                # Need things here!!!
-            
+        # Now process the image so long as we have at least specified
+        # an output file. If we have specified help, then we do no
+        # processing.
+        if (not help) and inputFile:
+            adjustedImage = utils.gainAdjustFile(fileName)
+            if outputFile:
+                utils.outputFile(outName, adjustedImage)
+            else:
+                utils.outputFile(fileName[:-4] + '-gain-adjusted.hdr', adjustedImage)
+           
     except getopt.error as err:
         # output error, and return with an error code
         print (str(err))

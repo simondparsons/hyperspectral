@@ -33,6 +33,6 @@ Currently converted to use utils: bands.py, viewer.py, convert.py
 
 2) Ultimately I want to only use the hacked verison of envi.py when gain
 conversion is necessary. That is now isolated into convert.py (use
-that to create a new gain-coverted image and then run everything else
+that to create a new gain-converted image and then run everything else
 on that) so we should just be able to call the modified version from
 that script.

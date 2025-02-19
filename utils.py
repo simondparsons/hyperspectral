@@ -108,4 +108,47 @@ def gainAdjustImage(image, gain):
                 for k in range(columns):
                     newImage[j,k,i] = image[j,k,i] * gain[i]
     return newImage
-  
+
+def parsePointsToPairs(intList):
+    pairedList = []
+    for i in range(0, len(intList), 2):
+        pairedList.append([intList[i], intList[i+1]])
+
+    return pairedList
+        
+#
+# Extract samples from file at the locations defined by points. This
+# pulls out al the bands. The associated function sampleImageAtBands
+# accepts a list of band indices and just returns those band values
+# for each point.
+#
+def sampleImage(points, file):
+    image = getImage(file)
+    samples = []
+    # points should be a list of pairs of coordinates:
+    #
+    # [ [x1, y1], [x2, y2], ...]
+    #
+    # and at each point we extract all the bands
+    for i in range(len(points)):
+        pointX = points[i][0]
+        pointY = points[i][1]
+        samples.append(image[pointX, pointY])
+        
+    return samples
+
+#
+# Extract samples, as above, but just for certain bands.
+#
+def sampleImageAtBands(points, bands, file):
+    # Get a list of samples each of all the bands
+    listOfFullSamples = sampleImage(points, file)
+    reducedBandList = []
+    for i in range(len(listOfFullSamples)):
+        tempList = []
+        for j in range(len(bands)):
+            tempList.append(listOfFullSamples[i][bands[j]])
+
+        reducedBandList.append(tempList)
+
+    return reducedBandList

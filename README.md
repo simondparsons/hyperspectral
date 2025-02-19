@@ -10,6 +10,10 @@ hyper.py   : the start of tools to analyse hyperspectral images. Right
 
 convert.py : applies gain conversion to an image, generating a new image.
 
+sample.py  : extracts the hyperspectral reflectance values at a set of
+             indicated points within the image. Also has the option to
+	     specify which bands to pull out.
+
 clicker.py : some code grabbed from the internet. Should allow
              selection of an roi within an image. Not clear how useful it is.
 
@@ -29,7 +33,8 @@ TODO:
 re-write is needed to pull those into a utils library to reduce
 duplication.
 
-Currently converted to use utils: bands.py, viewer.py, convert.py 
+Currently converted to use utils: bands.py, viewer.py, convert.py,
+sample.py
 
 2) Ultimately I want to only use the hacked verison of envi.py when gain
 conversion is necessary. That is now isolated into convert.py (use

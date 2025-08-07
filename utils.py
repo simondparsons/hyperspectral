@@ -111,7 +111,7 @@ def gainAdjustImage(image, gain):
 
 def parsePointsToPairs(intList):
     pairedList = []
-    for i in range(0, len(intList), 2):
+    for i in range(0, len(intList) - 1, 2):
         pairedList.append([intList[i], intList[i+1]])
 
     return pairedList

@@ -35,6 +35,7 @@ def main():
     help = False
     gotPoints = False
     gotBands = False
+    inputFile = False
 # Drop the filename from the list of command line arguments
     argList = sys.argv[1:]
 
@@ -53,6 +54,7 @@ def main():
         # instantiated if the argument was previosuly specified to
         # take a value.
         for currentArgument, currentValue in arguments:
+            print(currentArgument)
             if currentArgument in ("-h", "--Help"):
                 help = True
                 displayHelp()
@@ -62,12 +64,14 @@ def main():
                 # Convert the list of points into an array of
                 # pairs of coordinates
                 points = list(map(int, currentValue.split()))
+                print(points)
                 points = utils.parsePointsToPairs(points)
 
             elif currentArgument in ("-f", "--File"):
                 inputFile = True
                 fileName = currentValue
-               
+                print(fileName)
+                
             elif currentArgument in ("-b", "--Bands"):
                 gotBands = True
                 bands = list(map(int, currentValue.split()))
@@ -83,6 +87,7 @@ def main():
                 output = utils.sampleImageAtBands(points, bands, fileName)
             else:
                 output = utils.sampleImage(points, fileName)
+
             print(output)
 
     except getopt.error as err:

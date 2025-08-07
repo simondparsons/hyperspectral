@@ -336,15 +336,19 @@ def open(file, image=None):
     img.scale_factor = float(h.get('reflectance scale factor', 1.0))
 
     # Add band info
+    #
+    # SP's nasty hack to pull the gain information without rewriting
+    # BandInfo and all. Replaced 'fwhm', which I did not need, with
+    # 'data gain values' which I did.
 
     if 'wavelength' in h:
         try:
             img.bands.centers = [float(b) for b in h['wavelength']]
         except:
             pass
-    if 'fwhm' in h:
+    if 'data gain values' in h:
         try:
-            img.bands.bandwidths = [float(f) for f in h['fwhm']]
+            img.bands.bandwidths = [float(f) for f in h['data gain values']]
         except:
             pass
     img.bands.band_unit = h.get('wavelength units', None)

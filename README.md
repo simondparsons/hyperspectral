@@ -30,7 +30,9 @@ my-hacked-envi.py : as the name suggests, my mods to allow the
               copied into envi.py It only needs to be used with
               convert.py, otherwise original-envi.py is fine.
 
-envi.py :     The version loaded by the code through the spectral package.
+envi.py :     The version loaded by the code through the spectral
+	      package. At any given time coule be either original- or
+	      my-hacked-.
 
 TODO:
 1) Since all of these scripts have common elements, a proper

@@ -251,7 +251,7 @@ def main():
     options = "hwp:"
 
     # Long options
-    long_options = ["Help", "Waveform", "PCA"]
+    long_options = ["Help", "Waveform", "PCA="]
 
     try:
         # Parsing argument

@@ -7,7 +7,7 @@
 #
 # Originally based on code from Achyut Paudel via:
 # https://medium.com/@achyutpaudel50/hyperspectral-image-processing-in-python-custom-roi-selection-with-mouse-78fbaf7520aa
-# and then heavily rewritten. This version makes the gain adjustment
+# and then heavily rewritten. 
 
 # Necesary libraries
 import sys

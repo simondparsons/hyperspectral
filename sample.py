@@ -1,6 +1,6 @@
 # sample.py
 #
-# A script to extract some specifici points from a hyperspectral image.
+# A script to extract some specific points from a hyperspectral image.
 #
 # Simon Parsons
 # February 2025

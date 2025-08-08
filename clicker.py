@@ -1,10 +1,13 @@
 # viewer.py
 #
 # Some basic hyperspectral image handling, allowing the creation of a
-# viewable image.
+# viewable image and the extraction and analysis of the hyperspectral
+# data over user-selected regions of the image.
 #
 # Code from Achyut Paudel via:
 # https://medium.com/@achyutpaudel50/hyperspectral-image-processing-in-python-custom-roi-selection-with-mouse-78fbaf7520aa
+#
+# with a fwe minor edits in order to get it to run.
 
 # Necesary libraries
 from spectral import imshow, get_rgb
@@ -53,7 +56,8 @@ def extract_roi(arr, x, y, w, h, intensity, line):
 #  Corrected Image = {RawReflectance - DarkReflectance}/ {WhiteReflectance - DarkReflectance}
 
 # This is how we open a file:
-data_ref = envi.open('raw-data-240924/linseed_a_24_09_24.hdr','raw-data-240924/linseed_a_24_09_24.dat')
+#data_ref = envi.open('raw-data-240924/linseed_a_24_09_24.hdr','raw-data-240924/linseed_a_24_09_24.dat')
+data_ref = envi.open('../data/raw-data-240703/linseed_1_a.hdr','../data/raw-data-240703/linseed_1_a.dat')
 bands = data_ref.bands.centers
 raw_data = np.array(data_ref.load())
 
@@ -81,36 +85,35 @@ img_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 #Uncomment to view the RGB Image
 
-cv2.namedWindow("main", cv2.WINDOW_NORMAL)
-cv2.imshow('main', img_rgb)
+#cv2.namedWindow("main", cv2.WINDOW_NORMAL)
+#cv2.imshow('main', img_rgb)
 #cv2.imshow('main', img2)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-exit()
-
-# Now view the RGB image and mouse click to pick up some areas of the image.
-
-#cv2.namedWindow("Select the regions", cv2.WINDOW_NORMAL)
-# Set mouse callback function for window
-#cv2.setMouseCallback('Select the regions', mouse_callback)
-#image = cv2.rotate(image,cv2.ROTATE_90_CLOCKWISE)
-#cv2.imshow('Select the regions', image)
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
 
-#print(right_clicks)
 
-# Code below is not functional --- incoherent snippets from the Medium article.
 
-# Having identified some points with the mouse, grab data from around
-# those points.
+# Now view the RGB image and mouse click to pick up some areas of the image.
+
+cv2.namedWindow("Select the regions", cv2.WINDOW_NORMAL)
+# Set mouse callback function for window
+cv2.setMouseCallback('Select the regions', mouse_callback)
+#image = cv2.rotate(image,cv2.ROTATE_90_CLOCKWISE)
+cv2.imshow('Select the regions', image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+print(right_clicks)
+
+# Having collected the right clicks, extrcta data from around those
+# points.
+
 coordinates = right_clicks
 rois = [] # returned ROIs
 length = 1 # width and height
 intensity = 1 # bounding box line intensity
 line = 1 # bounding box line width
-bounding_boxed = corrected_nparr
+bounding_boxed = raw_data
 cd = []
 for coordinate in coordinates:
     (x, y) = coordinate
@@ -119,6 +122,8 @@ for coordinate in coordinates:
     (roi, bounding_boxed) = extract_roi(
         bounding_boxed, x1, y1, length, length, intensity, line)
     rois.append(roi)
+
+print(rois)
 
 int_m = []
 for i in range(len(rois)):
@@ -130,6 +135,12 @@ for i in range(len(rois)):
     int_m_1 = np.array(int_m)
     int_m_1 = np.mean(int_m,axis=0)
     
+print(intensity)
+print(int_m_1)
+
+exit()
+
+# The code below here does not run.
 
 plt.figure(3)
 plt.plot(bands, int_m_1, label='Mean Reflectance')

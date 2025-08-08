@@ -118,7 +118,7 @@ def parsePointsToPairs(intList):
         
 #
 # Extract samples from file at the locations defined by points. This
-# pulls out al the bands. The associated function sampleImageAtBands
+# pulls out all the bands. The associated function sampleImageAtBands
 # accepts a list of band indices and just returns those band values
 # for each point.
 #

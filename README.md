@@ -14,8 +14,10 @@ sample.py  : extracts the hyperspectral reflectance values at a set of
              indicated points within the image. Also has the option to
 	     specify which bands to pull out.
 
-clicker.py : some code grabbed from the internet. Should allow
-             selection of an roi within an image. Not clear how useful it is.
+clicker.py : some code grabbed from the internet which allows the
+             selection of a set of RoIs within an image and then
+             calculates the average spectral reflectance across those
+             regions.
 
 fragment.py : some stuff that may or may not be useful.
 

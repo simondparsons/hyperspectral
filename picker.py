@@ -1,24 +1,24 @@
-# clicker.py
+# select.py
 #
-# Some basic hyperspectral image handling, allowing the creation of a
-# viewable image and the extraction and analysis of the hyperspectral
-# data over user-selected regions of the image.
-#
-# Code from Achyut Paudel via:
+# My version of the RoI selection code from Achyut Paudel via:
 # https://medium.com/@achyutpaudel50/hyperspectral-image-processing-in-python-custom-roi-selection-with-mouse-78fbaf7520aa
 #
-# with a few minor edits in order to get it to run.
+# re-written to satisfy my coding quirks and to do more exactly what I wanted.
+#
+# Simon Parsons
+# University of Lincoln
+# August 2025
 
-# Necessary libraries
+# Necesary libraries
 from spectral import imshow, get_rgb
 import spectral.io.envi as envi
 import numpy as np
-#import matplotlib.pyplot as plt
-import matplotlib
+import matplotlib.pyplot as plt
 import cv2
 import os
 import pandas as pd
 
+# Using mouse clicks requires we use a global variable. 
 # The [x, y] for each right-click event will be stored here
 right_clicks =[]
 

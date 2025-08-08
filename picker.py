@@ -80,11 +80,12 @@ for click in mouse_clicks:
     
 print(intensities)
 
-plt.figure()
+# Plotting code below
+#plt.figure()
 #for i in range(len(intensities)):
     #plt.subplot()
-plt.plot(intensities[0], color = 'b')
-plt.show()
+#plt.plot(intensities[0], color = 'b')
+#plt.show()
     
 # The code below here is supposed to display the spectrum, but
 # crashes in my environment.

@@ -13,6 +13,7 @@
 import spectral as sp
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
 
 #
 # Print the band frequencies from file along with the index. 
@@ -152,3 +153,5 @@ def sampleImageAtBands(points, bands, file):
         reducedBandList.append(tempList)
 
     return reducedBandList
+
+

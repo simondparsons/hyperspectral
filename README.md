@@ -19,6 +19,9 @@ clicker.py : some code grabbed from the internet which allows the
              calculates the average spectral reflectance across those
              regions.
 
+picker.py :  my cut down version of clicker.py which picks out the
+	     spectrum at user selected points.
+
 fragment.py : some stuff that may or may not be useful.
 
 original-envi.py : the original envi.py from the spectral package.

@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 def displayHelp():
     print("hyper.py expects to be run in the following modes:")
     print("1) python hyper.py -h or python hyper.py --Help, which displays this message.")
-    print("2) python hyper.py -p <frac> or python hyper.py --PCA frac, which does a PCA and then redcues to the set of eigenvalues that capture <frac> of the variataion.")
+    print("2) python hyper.py -p <frac> or python hyper.py --PCA frac, which does a PCA and then reduces to the set of eigenvalues that capture <frac> of the variataion.")
     print("3) python hyper.py -w or python hyper.py --Waveform, which computes the average intensity across the images at every wavelength.")
     
 #

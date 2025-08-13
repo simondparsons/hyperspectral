@@ -46,7 +46,7 @@ def main():
     options = "hl:v:"
 
     # Long options
-    long_options = ["Help", "All", "Average"]
+    long_options = ["Help", "All=", "Average="]
 
     try:
         # Parsing argument
@@ -57,7 +57,7 @@ def main():
             if currentArgument in ("-h", "--Help"):
                 displayHelp()
             
-            elif currentArgument in ("-v", "Average"):
+            elif currentArgument in ("-v", "--Average"):
                 bands, intensities = utils.openWavebandFile(argList[-1])
                 utils.plotAverageWaveform(bands, intensities)                
             

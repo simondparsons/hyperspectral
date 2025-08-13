@@ -11,7 +11,7 @@
 # proper wavelngths, but instead proxies which just count rows.
 #
 # Simon Parsons
-# September 2024
+# September 2025
 #
 # Borrowing from:
 # https://www.spectralpython.net

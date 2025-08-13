@@ -3,7 +3,7 @@
 # My version of the RoI selection code from Achyut Paudel via:
 # https://medium.com/@achyutpaudel50/hyperspectral-image-processing-in-python-custom-roi-selection-with-mouse-78fbaf7520aa
 #
-# re-written to satisfy my coding quirks and to do more exactly what I wanted.
+# Re-written to satisfy my coding quirks and to do more exactly what I wanted.
 #
 # Simon Parsons
 # University of Lincoln
@@ -18,6 +18,7 @@ import cv2
 import os
 import pandas as pd
 import utils
+import csv
 
 # Using mouse clicks requires we use a global variable. The [x, y]
 # for each left-click event will be stored here
@@ -52,8 +53,9 @@ def extract_roi(arr, x, y, w, h, intensity, line):
 
 # Open the file using the spectral package and extract some data.
 
-data_ref = envi.open('../data/raw-data-240703/linseed_1_a.hdr','../data/raw-data-240703/linseed_1_a.dat')
-bands = data_ref.bands.centers       # List of bands
+uncorrected = envi.open('../data/raw-data-240703/linseed_4_a.hdr','../data/raw-data-240703/linseed_4_a.dat')
+data_ref = envi.open('../data/raw-data-240703/linseed_4_a-gain-adjusted.hdr','../data/raw-data-240703/linseed_4_a-gain-adjusted.dat')
+bands = uncorrected.bands.centers #data_ref.bands.centers       # List of bands
 raw_data = np.array(data_ref.load()) # The raw image data
 
 #Get an RGB image which we will use to make our selections on. We use
@@ -77,24 +79,17 @@ intensities = []
 for click in mouse_clicks:
     (x, y) = click
     intensities.append(raw_data[x, y])
-    
+
 print(intensities)
+print(bands)
+# Write the set of intensities to a CSV file
+# Borrowing from: https://docs.python.org/3/library/csv.html
+#
+with open('output.csv', 'w', newline='') as csvfile:
+    iWriter = csv.writer(csvfile, delimiter=',',
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    iWriter.writerow(bands)
+    for intensity in intensities:
+        iWriter.writerow(intensity)
 
-# Plotting code below
-#plt.figure()
-#for i in range(len(intensities)):
-    #plt.subplot()
-#plt.plot(intensities[0], color = 'b')
-#plt.show()
-    
-# The code below here is supposed to display the spectrum, but
-# crashes in my environment.
-
-#plt.figure()
-#plt.plot(bands, intensities[0], label='Mean Reflectance')
-
-#plt.legend(loc='upper left')
-#plt.title('Leaf Spectral Footprint\\n Mean in ROI Area')
-#plt.xlabel('Wavelength (nm)')
-#plt.ylabel('Reflectance')
-#plt.show()
+# plotter.py can be used to read  this file and plot the waveforms.

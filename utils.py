@@ -62,9 +62,14 @@ def getImage(file):
 # the data in the image. It will use the given name.
 #
 # Note that for now this only uses the default (.img) extension for
-# the file.
-def outputFile(name, image):
-    sp.envi.save_image(name, image, dtype=np.float32)
+# the data file.
+def outputFile(name, image, **kwargs):
+    if kwargs:
+        for k, val in kwargs.items():
+            if k == 'ext':
+                sp.envi.save_image(name, image, ext=val, dtype=np.float32)
+    else:
+        sp.envi.save_image(name, image, dtype=np.float32)
 
 #
 # Extract the specified wavebands. The expected use of this is to to

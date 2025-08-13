@@ -40,7 +40,9 @@ def main():
     # Drop the filename from the list of command line arguments
     argList = sys.argv[1:]
 
-    # The only options are help and display bands.
+    # Defining options. Note that the way that bands are passed is not
+    # pretty (and doesn't specify that the options take values, but
+    # allows for multiple values to be simply called.
     options = "hb"
 
     # Long options

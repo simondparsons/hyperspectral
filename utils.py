@@ -13,6 +13,7 @@
 import spectral as sp
 import numpy as np
 import cv2
+import csv
 import matplotlib.pyplot as plt
 
 #
@@ -60,6 +61,8 @@ def getImage(file):
 # Use the spectral package to create a new data and header file for
 # the data in the image. It will use the given name.
 #
+# Note that for now this only uses the default (.img) extension for
+# the file.
 def outputFile(name, image):
     sp.envi.save_image(name, image, dtype=np.float32)
 
@@ -154,4 +157,58 @@ def sampleImageAtBands(points, bands, file):
 
     return reducedBandList
 
+#
+# Open a CSV file of waveforms and extract the set of bands and intensities
+
+def openWavebandFile(file):
+    with open(file, 'r', newline='') as csvfile:
+        iRead = csv.reader(csvfile, delimiter=',',
+                            quotechar='|')
+        intensities = []
+        for row in iRead:
+            fRow = []
+            for intensity in row:
+                fRow.append(float(intensity))
+            intensities.append(fRow)
+
+    bands = intensities.pop(0)
+
+    return bands, intensities
+
+# Plot all the intensity waveforms passed to the function, cycling
+# through colours as per:
+# https://stackoverflow.com/questions/4971269/how-to-pick-a-new-color-for-each-plotted-line-within-a-figure
+#
+# Best practice is to pass information on the bands, but we allow for
+# this information to not be included. 
+#
+def plotWaveforms(bands, intensities):
+    plt.figure()
+    colors = iter(plt.cm.rainbow(np.linspace(0, 1, len(intensities))))
+    for intensity in intensities:
+        c = next(colors)
+        if bands != None:
+            plt.plot(bands, intensity, color = c)
+        else:
+            plt.plot(intensity, color = c)
+    plt.show()
+
+# As above, but averaging the values at each waveband.
+#
+def plotAverageWaveform(bands, intensities):
+    sumIntensity = [0] * len(intensities[0])
+    for i in range(len(sumIntensity)):
+        for j in range(len(intensities)):
+            sumIntensity[i] = sumIntensity[i] + intensities[j][i]
+
+    aveIntensity = [0] * len(intensities[0])
+    for i in range(len(aveIntensity)):
+        aveIntensity[i] = sumIntensity[i]/len(intensities)
+
+    plt.figure()
+    if bands != None:
+        plt.plot(bands, aveIntensity, color = 'b')
+    else:
+        plt.plot(aveIntensity, color = 'b')
+    plt.show()
 

@@ -29,8 +29,8 @@ my-hacked-envi.py : as the name suggests, my mods to allow the
               extraction of gain data. TBC, I didn't change any of the
               structures, just changed what elements are read from the
               header file into the existing structure replacing some
-              stuff that isn't needed for viewer.py. This might cause
-              problems down the line. To use this, it needs to be
+              stuff that I was not using. This might cause problems
+              down the line. To use this code, the script needs to be
               copied into envi.py It only needs to be used with
               convert.py, otherwise original-envi.py is fine.
 
@@ -51,11 +51,11 @@ fragment.py : some stuff that may or may not be useful.
 # TODO
 
 1) Since all of these scripts have common elements, a proper
-re-write is needed to pull those into a utils library to reduce
+re-write is needed to pull those into the utils.py library to reduce
 duplication.
 
 Currently converted to use utils: bands.py, viewer.py, convert.py,
-sample.py
+sample.py, and plotter.py
 
 2) Ultimately I want to only use the hacked verison of envi.py when gain
 conversion is necessary. That is now isolated into convert.py (use

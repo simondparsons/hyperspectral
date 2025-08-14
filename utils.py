@@ -222,7 +222,8 @@ def selectPoints(file):
 
     image = getImage(file)
     #envi.open('../data/raw-data-240924/linseed_b_24_09_24-gain-adjusted.hdr','../data/raw-data-240924/linseed_b_24_09_24-gain-adjusted.dat')
-    # Get the wavelengths. If these are missing from the metadata, we will substitute numbers 
+    # Get the wavelengths. If these are missing from the metadata, we
+    # will substitute numbers
     bands = image.bands.centers 
     raw_data = np.array(image.load())
 
@@ -245,6 +246,8 @@ def selectPoints(file):
         (x, y) = click
         intensities.append(raw_data[x, y])
 
+    # If the bands are not in the metadata, we will just number the
+    # rows so that the plotting code has what it expects.
     if not bands:
         bands = []
         for i in range(len(intensities[0])):

@@ -24,10 +24,10 @@ import utils
 #
 def displayHelp():
     print("picker.py expects to be run in the following modes:")
-    print("1) python picker.py -h or python picker.py --Help, which displays this message;")
-    print("2) python plotter.py -l <filename>, or python plotter.py -All <filename> which plots all the spectra in <filename>; or")
-    print("3) python plotter.py -v <filename> or  plotter.py -Average <filename> which computes the average of all the spectra in <filename> and plots that.")
-    print("In all cases <filename> should be a csv file holding waveforms.")
+    print("1) python picker.py -h or python picker.py --Help, which displays this message; or")
+    print("2) python picker.py -i <infile>, or python plotter.py --Input <infile> which displayes the image in <infile> to allow the selection of point spectra; with the option of")
+    print("3) python picker.py -v <outfile> or  plotter.py --Output <outfile> in which case the CSV output is written into <outfile> rather than a default.")
+    print("<infile> should be a hyperspectral .hdr file and <outfile> will be a CSV so a .csv extension would be appropriate.")
 #
 # Just reads commandline arguments. All the work is done by functions
 # in utils.py

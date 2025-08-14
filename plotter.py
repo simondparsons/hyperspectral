@@ -29,8 +29,8 @@ import utils
 def displayHelp():
     print("plotter.py expects to be run in the following modes:")
     print("1) python plotter.py -h or python plotter.py --Help, which displays this message;")
-    print("2) python plotter.py -l <filename>, or python plotter.py -All <filename> which plots all the spectra in <filename>; or")
-    print("3) python plotter.py -v <filename> or  plotter.py -Average <filename> which computes the average of all the spectra in <filename> and plots that.")
+    print("2) python plotter.py -l <filename>, or python plotter.py --All <filename> which plots all the spectra in <filename>; or")
+    print("3) python plotter.py -v <filename> or  plotter.py --Average <filename> which computes the average of all the spectra in <filename> and plots that.")
     print("In all cases <filename> should be a csv file holding waveforms.")
 
 #

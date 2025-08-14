@@ -5,10 +5,12 @@
 # Simon Parsons
 # November 2024
 #
+
 # Borrowing from:
 # https://www.spectralpython.net
 # https://www.geeksforgeeks.org/working-images-python/
 # https://www.geeksforgeeks.org/command-line-arguments-in-python/
+# https://medium.com/@achyutpaudel50/hyperspectral-image-processing-in-python-custom-roi-selection-with-mouse-78fbaf7520aa
 
 import spectral as sp
 import numpy as np
@@ -16,9 +18,34 @@ import cv2
 import csv
 import matplotlib.pyplot as plt
 
+# Functions are grouped somewhat thematically until I can come up with
+# a better way to do it.
+
 #
+# Mouse handling
+#
+
+# Using mouse clicks requires we use a global variable. The [x, y]
+# for each left-click event will be stored here
+mouse_clicks =[]
+
+# Mouse callback
+#
+# This function will be called at every mouse event. We want to just
+# log left click locations.
+def mouse_callback(event, x, y, flags, params):
+    
+    #the left-click event value is 1
+    if event == 1:
+        global mouse_clicks        
+        #store the coordinates of the left-click event
+        mouse_clicks.append([x, y])
+
+#
+# Handling bands
+#
+
 # Print the band frequencies from file along with the index. 
-#
 def printBands(file):
     img = getImage(file)
     # The bands member of the SpyFile object returned by getImage() is
@@ -27,10 +54,8 @@ def printBands(file):
     for i in range(len(bands.centers)):
         print("[",bands.centers[i], i, "]")
 
-#
 # Search through wavelengths until the specified one is found. Show index.
 # All the key operations are provided by the spectral package.
-#
 def findBand(file, wavelength):
     wave = float(wavelength)
     img = getImage(file)
@@ -47,17 +72,30 @@ def findBand(file, wavelength):
         if(wave <= bands.centers[i]):
             print("[",bands.centers[i], i, "]")
             return
-    # We got to the end and didn;t find what we were looking for.
+    # We got to the end and didn't find what we were looking for.
     print("Wavelength not found in file")
 
+# Extract the specified wavebands from a file. The expected use of
+# this is to to create an RGB image, hence the name.
+def showRGBImage(file, bands):
+    # load image from file and grab the relevant wavelengths
+    image = getImage(file)
+    rgbImage = sp.get_rgb(image, bands=(int(bands[0]), int(bands[1]), int(bands[2])))
+    # Use OpenCV to display the image. Click on the window when done.
+    cv2.namedWindow("main", cv2.WINDOW_NORMAL)
+    cv2.imshow('main', rgbImage)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 #
+# Handling files
+#
+
 # Use the spectral package to create a file object (data isn't loaded
 # until it is accessed.
-#
 def getImage(file):
     return sp.open_image(file)
 
-#
 # Use the spectral package to create a new data and header file for
 # the data in the image. It will use the given name.
 #
@@ -71,26 +109,42 @@ def outputFile(name, image, **kwargs):
     else:
         sp.envi.save_image(name, image, dtype=np.float32)
 
-#
-# Extract the specified wavebands. The expected use of this is to to
-# create an RGB image, hence the name.
-#
-def showRGBImage(file, bands):
-    # load image from file and grab the relevant wavelengths
-    image = getImage(file)
-    rgbImage = sp.get_rgb(image, bands=(int(bands[0]), int(bands[1]), int(bands[2])))
-    # Use OpenCV to display the image. Click on the window when done.
-    cv2.namedWindow("main", cv2.WINDOW_NORMAL)
-    cv2.imshow('main', rgbImage)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+# Open a CSV file of waveforms and extract the set of bands and intensities
+def openWavebandFile(file):
+    # Read all the lines into intensities
+    with open(file, 'r', newline='') as csvfile:
+        iRead = csv.reader(csvfile, delimiter=',',
+                            quotechar='|')
+        intensities = []
+        for row in iRead:
+            fRow = []
+            for intensity in row:
+                fRow.append(float(intensity))
+            intensities.append(fRow)
+
+    # The first element is actually the list of bands
+    bands = intensities.pop(0)
+
+    return bands, intensities
+
+# Output a CSV file of waveforms. The first line are the bands, and
+# the rest of the bands are reflectancies/intensities
+def outputCSVFile(bands, intensities, file):
+    with open(file, 'w', newline='') as csvfile:
+        iWriter = csv.writer(csvfile, delimiter=',',
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        iWriter.writerow(bands)
+        for intensity in intensities:
+            iWriter.writerow(intensity)
 
 #
+# Gain adjustment
+#
+
 # Perform gain adjustment on the file. Just load the relevant image,
 # extract the gain data and pass to gainAdjustImage.
 #
 # Note that extracting the gain requires the hacked version of envi.py
-#
 def gainAdjustFile(file):
     # load image data and extract the 
     image = getImage(file)
@@ -99,10 +153,8 @@ def gainAdjustFile(file):
 
     return adjustedImage
 
-#
 # Perform gain adjustment on an image. Assumes we have the gain data
 # already extracted.
-#
 def gainAdjustImage(image, gain):
     # image is a "cube" of rows x columns x bands. gain is a
     # adjustment per band. We adjust for the gain across the entire
@@ -118,6 +170,10 @@ def gainAdjustImage(image, gain):
                     newImage[j,k,i] = image[j,k,i] * gain[i]
     return newImage
 
+#
+# Sampling from an image
+#
+
 def parsePointsToPairs(intList):
     pairedList = []
     for i in range(0, len(intList) - 1, 2):
@@ -125,12 +181,10 @@ def parsePointsToPairs(intList):
 
     return pairedList
         
-#
 # Extract samples from file at the locations defined by points. This
 # pulls out all the bands. The associated function sampleImageAtBands
 # accepts a list of band indices and just returns those band values
 # for each point.
-#
 def sampleImage(points, file):
     image = getImage(file)
     samples = []
@@ -146,9 +200,7 @@ def sampleImage(points, file):
         
     return samples
 
-#
 # Extract samples, as above, but just for certain bands.
-#
 def sampleImageAtBands(points, bands, file):
     # Get a list of samples each of all the bands
     listOfFullSamples = sampleImage(points, file)
@@ -163,22 +215,46 @@ def sampleImageAtBands(points, bands, file):
     return reducedBandList
 
 #
-# Open a CSV file of waveforms and extract the set of bands and intensities
+# Picking points from an image
+#
 
-def openWavebandFile(file):
-    with open(file, 'r', newline='') as csvfile:
-        iRead = csv.reader(csvfile, delimiter=',',
-                            quotechar='|')
-        intensities = []
-        for row in iRead:
-            fRow = []
-            for intensity in row:
-                fRow.append(float(intensity))
-            intensities.append(fRow)
+def selectPoints(file):
 
-    bands = intensities.pop(0)
+    image = getImage(file)
+    #envi.open('../data/raw-data-240924/linseed_b_24_09_24-gain-adjusted.hdr','../data/raw-data-240924/linseed_b_24_09_24-gain-adjusted.dat')
+    # Get the wavelengths. If these are missing from the metadata, we will substitute numbers 
+    bands = image.bands.centers 
+    raw_data = np.array(image.load())
 
-    return bands, intensities
+    #Get an RGB image which we will use to make our selections on. We use
+    # the default bands.
+    rgbImage = sp.get_rgb(raw_data)
+
+    # Now view the RGB image, and set our mouse_callback function to
+    # record mouse clicks on the image.
+    cv2.namedWindow("Pick your points", cv2.WINDOW_NORMAL)
+    # Set mouse callback function for window
+    cv2.setMouseCallback("Pick your points", mouse_callback)
+    cv2.imshow("Pick your points", rgbImage)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    # Now extract the reflectance at each point.
+    intensities = []
+    for click in mouse_clicks:
+        (x, y) = click
+        intensities.append(raw_data[x, y])
+
+    if not bands:
+        bands = []
+        for i in range(len(intensities[0])):
+            bands.append(i+1)
+            
+    return(bands, intensities)
+
+#
+# Plotting
+#
 
 # Plot all the intensity waveforms passed to the function, cycling
 # through colours as per:
@@ -217,3 +293,21 @@ def plotAverageWaveform(bands, intensities):
         plt.plot(aveIntensity, color = 'b')
     plt.show()
 
+# Using mouse clicks requires we use a global variable. The [x, y]
+# for each left-click event will be stored here
+mouse_clicks =[]
+
+# Mouse callback
+#
+# This function will be called at every mouse event. We want to just
+# log left click locations.
+#
+# Left clicks are more elegant than right clicks.
+def mouse_callback(event, x, y, flags, params):
+    
+    #the left-click event value is 1
+    if event == 1:
+        global mouse_clicks
+        
+        #store the coordinates of the left-click event
+        mouse_clicks.append([x, y])

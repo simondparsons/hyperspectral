@@ -81,9 +81,9 @@ def main():
                 extension = True
                 extensionName = currentValue
           
-            # Now process the image so long as we have at least specified
-            # an input file. If we have specified help, then we do no
-            # processing.
+        # Now process the image so long as we have at least specified
+        # an input file. If we have specified help, then we do no
+        # processing.
         if (not help) and inputFile:
             adjustedImage = utils.gainAdjustFile(fileName)
             if outputFile:

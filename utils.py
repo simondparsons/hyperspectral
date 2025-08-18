@@ -87,6 +87,18 @@ def showRGBImage(file, bands):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+# As above, but makes use of get_rgb's ability to infer (or at least
+# guess) the rigt wavebands.
+def showDefaultRGBImage(file):
+    # load image from file and grab the relevant wavelengths
+    image = getImage(file)
+    rgbImage = sp.get_rgb(image)
+    # Use OpenCV to display the image. Click on the window when done.
+    cv2.namedWindow("main", cv2.WINDOW_NORMAL)
+    cv2.imshow('main', rgbImage)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 #
 # Handling files
 #
@@ -216,8 +228,6 @@ def sampleImageAtBands(points, bands, file):
 
 #
 # Picking points from an image
-#
-
 def selectPoints(file):
 
     image = getImage(file)
@@ -278,7 +288,6 @@ def plotWaveforms(bands, intensities):
     plt.show()
 
 # As above, but averaging the values at each waveband.
-#
 def plotAverageWaveform(bands, intensities):
     sumIntensity = [0] * len(intensities[0])
     for i in range(len(sumIntensity)):

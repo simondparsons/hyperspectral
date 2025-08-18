@@ -31,6 +31,7 @@ def displayHelp():
     print("viewer.py expects to be run in the following modes:")
     print("1) python viewer.py -h or python viewer.py --Help, which displays this message.")
     print("2) python viewer.py -b band1 band2 band3 <filename>, or python viewer.py --Bands  band1 band2 band3 <filename> ")
+    print("3) python viewer.py -d <filename>, or python viewer.py --Default <filename> ")
     print("<filename> should be a hyperspectral image header file, and bands should be the indices of the red, green and blue bands within the hyperspectral image. This data can be found in the header file (or see the bands.py utility).")
 
 #
@@ -42,30 +43,32 @@ def main():
 
     # Defining options. Note that the way that bands are passed is not
     # pretty (and doesn't specify that the options take values, but
-    # allows for multiple values to be simply called.
-    options = "hb"
+    # allows for multiple values to be simply called).
+    options = "hbd:"
 
     # Long options
-    long_options = ["Help", "Bands"]
+    long_options = ["Help", "Bands", "Default="]
 
     try:
         # Parsing argument
         arguments, values = getopt.getopt(argList, options, long_options)
 
-        print(arguments)
-        print(values)
         # checking each argument
         for currentArgument, currentValue in arguments:
             if currentArgument in ("-h", "--Help"):
                 displayHelp()
-            
+                
+            elif currentArgument in ("-d", "--Default"):
+                utils.showDefaultRGBImage(currentValue)
+             
             elif currentArgument in ("-b", "--Bands"):
                 # Passing the relevant values to the function that
                 # does all the work. 
                 bands = values[0:3]
                 print("Bands = ", bands)
                 utils.showRGBImage(argList[-1], bands)
-                       
+                
+                
     except getopt.error as err:
         # output error, and return with an error code
         print (str(err))

@@ -56,24 +56,51 @@ def printBands(file):
 
 # Search through wavelengths until the specified one is found. Show index.
 # All the key operations are provided by the spectral package.
+#
+# Re-written (August 2025) so that the main functionality can be accessed
+# on its own.
 def findBand(file, wavelength):
     wave = float(wavelength)
     img = getImage(file)
-    bands = img.bands
+    bands = img.bands.centers
+
+    index = locateBandsinImage(bands, wave)
+
+    if index != -1:
+        print("[",bands[index], index, "]")
+
+    else:
+        print("Wavelength not found in file")
+    
     # Step through bands until the centre wavelength is no less than
     # the one we are looking for. Exploits the fact that wavelengths
     # are stored in ascending order.
     #
     # I hate jumping out of a for loop, but the while alternative was
     # even less elegant.
-    for i in range(len(bands.centers)):
+    #for i in range(len(bands.centers)):
         # We have counted up so that the centre of the current band is
         # no less than the wavelength.
-        if(wave <= bands.centers[i]):
-            print("[",bands.centers[i], i, "]")
-            return
+    #    if(wave <= bands.centers[i]):
+    #        print("[",bands.centers[i], i, "]")
+    #        return
     # We got to the end and didn't find what we were looking for.
-    print("Wavelength not found in file")
+    #print("Wavelength not found in file")
+
+def locateBandsinImage(bands, wavelength):
+    # Step through bands until the centre wavelength is no less than
+    # the one we are looking for. Exploits the fact that wavelengths
+    # are stored in ascending order.
+    #
+    # I hate jumping out of a for loop, but the while alternative was
+    # even less elegant.
+    for i in range(len(bands)):
+        # We have counted up so that the centre of the current band is
+        # no less than the wavelength.
+        if(wavelength <= bands[i]):
+            return i
+    # We got to the end and didn't find what we were looking for.
+    return -1
 
 # Extract the specified wavebands from a file. The expected use of
 # this is to to create an RGB image, hence the name.
@@ -231,15 +258,24 @@ def sampleImageAtBands(points, bands, file):
 def selectPoints(file):
 
     image = getImage(file)
-    #envi.open('../data/raw-data-240924/linseed_b_24_09_24-gain-adjusted.hdr','../data/raw-data-240924/linseed_b_24_09_24-gain-adjusted.dat')
     # Get the wavelengths. If these are missing from the metadata, we
     # will substitute numbers
     bands = image.bands.centers 
     raw_data = np.array(image.load())
 
-    #Get an RGB image which we will use to make our selections on. We use
-    # the default bands.
-    rgbImage = sp.get_rgb(raw_data)
+    #Get an RGB image which we will use to make our selections on.
+    if bands:
+        # Use the code for pulling band information to pick the bands if
+        # they exist:
+        blueBand = locateBandsinImage(bands, 510)
+        greenBand = locateBandsinImage(bands, 565)
+        redBand = locateBandsinImage(bands, 600)
+        rgbImage = sp.get_rgb(image, bands=(redBand, greenBand, blueBand))
+    else:
+        # We use default bands based on B=510, G=565.5, R=600. These are
+        # not perfect, but are an improvement for my images on the
+        # sp.get_rgb default.
+        rgbImage = sp.get_rgb(raw_data, bands=(102, 85, 55))
 
     # Now view the RGB image, and set our mouse_callback function to
     # record mouse clicks on the image.

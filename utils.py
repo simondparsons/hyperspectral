@@ -341,6 +341,22 @@ def plotAverageWaveform(bands, intensities):
         plt.plot(aveIntensity, color = 'b')
     plt.show()
 
+# Subtracting intensities at each waveband. Makes a lot of assumptions
+# about the format of the files, but does allow for no band
+# information.
+def plotDifference(bands1, bands2, intensities1, intensities2):
+    # Assume we don't have band information
+
+    # Each intensities is a list of lists which shuld have one entry.
+    waveLength = min(len(intensities1[0]), len(intensities2[0]))
+    waveform = [0] * waveLength
+    
+    for i in range(len(waveform)):
+        waveform[i] = abs(intensities1[0][i] - intensities2[0][i])
+
+    plt.plot(waveform, color = 'b')
+    plt.show()
+    
 # Using mouse clicks requires we use a global variable. The [x, y]
 # for each left-click event will be stored here
 mouse_clicks =[]

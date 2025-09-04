@@ -58,11 +58,11 @@ def main():
                 displayHelp()
             
             elif currentArgument in ("-v", "--Average"):
-                bands, intensities = utils.openWavebandFile(argList[-1])
+                bands, intensities = utils.openWavebandFile(currentValue)
                 utils.plotAverageWaveform(bands, intensities)                
             
             elif currentArgument in ("-l", "--All"):
-                bands, intensities = utils.openWavebandFile(argList[-1])
+                bands, intensities = utils.openWavebandFile(currentValue)
                 utils.plotWaveforms(bands, intensities)
             
     except getopt.error as err:

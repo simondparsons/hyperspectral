@@ -31,7 +31,8 @@ import utils
 def displayHelp():
     print("difference.py expects to be run in the following modes:")
     print("1) python difference.py -h or difference plotter.py --Help, which displays this message;")
-    print("2) python difference.py -i1 <filename1> -i2 <filename2>, or python plotter.py -Input1 <filename1> -Input <filename2> which displays the difference between the two waveforms")
+    print("2) python difference.py -i1 <filename1> -i2 <filename2>, or python plotter.py -Input1 <filename1> -Input <filename2> which displays the difference between the two waveforms: the waveform in 1 minus that in 2.")
+    print("3) using the -a or --Absolute switches plots the absolute difference between waveforms.")
     print("<filename-n> should be a csv file holding waveforms.")
 
 #
@@ -39,6 +40,7 @@ def displayHelp():
 # in utils.py
 #
 def main():
+    abs = False
     help = False
     file1 = False
     file2 = False
@@ -51,10 +53,10 @@ def main():
     
     # We support help, printing all spectra, or computing and printing
     # the pointwise average of the spectra
-    options = "hi:j:"
+    options = "hai:j:"
 
     # Long options
-    long_options = ["Help", "Input1=", "Input2="]
+    long_options = ["Help", "Absolute", "Input1=", "Input2="]
 
     try:
         # Parsing argument
@@ -65,7 +67,10 @@ def main():
             if currentArgument in ("-h", "--Help"):
                 displayHelp()
                 help = True
-            
+
+            elif currentArgument in ("-a", "--Absolute"):
+                abs = True
+        
             elif currentArgument in ("-i", "--Input1"):
                 bands1, intensities1 = utils.openWavebandFile(currentValue)
                 file1 = True
@@ -80,7 +85,7 @@ def main():
 
     if not help:
         if file1 and file2:
-            utils.plotDifference(bands1, bands2, intensities1, intensities2)
+            utils.plotDifference(bands1, bands2, intensities1, intensities2, abs)
         else:
             print("Need two files to be specified")
 

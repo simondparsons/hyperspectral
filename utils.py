@@ -344,16 +344,20 @@ def plotAverageWaveform(bands, intensities):
 # Subtracting intensities at each waveband. Makes a lot of assumptions
 # about the format of the files, but does allow for no band
 # information.
-def plotDifference(bands1, bands2, intensities1, intensities2):
+def plotDifference(bands1, bands2, intensities1, intensities2, useAbs):
     # Assume we don't have band information
-
-    # Each intensities is a list of lists which shuld have one entry.
+    
+    # Each intensities is a list of lists which should have one entry.
     waveLength = min(len(intensities1[0]), len(intensities2[0]))
     waveform = [0] * waveLength
-    
-    for i in range(len(waveform)):
-        waveform[i] = abs(intensities1[0][i] - intensities2[0][i])
 
+    if useAbs:
+        for i in range(len(waveform)):
+            waveform[i] = abs(intensities1[0][i] - intensities2[0][i])
+    else:
+        for i in range(len(waveform)):
+            waveform[i] = intensities1[0][i] - intensities2[0][i]
+            
     plt.plot(waveform, color = 'b')
     plt.show()
     

@@ -351,15 +351,29 @@ def plotDifference(bands1, bands2, intensities1, intensities2, useAbs):
     waveLength = min(len(intensities1[0]), len(intensities2[0]))
     waveform = [0] * waveLength
 
+    # If we are using absilute values, we just have one waveform to show.
     if useAbs:
         for i in range(len(waveform)):
             waveform[i] = abs(intensities1[0][i] - intensities2[0][i])
-    else:
-        for i in range(len(waveform)):
-            waveform[i] = intensities1[0][i] - intensities2[0][i]
             
-    plt.plot(waveform, color = 'b')
-    plt.show()
+        plt.plot(waveform, color = 'b')
+        plt.show()
+
+    # If we are not using absolute values, display in two colours
+    else:
+        negform = [0] * waveLength
+        for i in range(len(waveform)):
+            difference = intensities1[0][i] - intensities2[0][i]
+            if difference > 0:
+                waveform[i] = difference
+            else:
+                negform[i] = difference
+
+        plt.plot(waveform, color = 'b')
+        plt.plot(negform, color = 'r')
+        plt.show()
+        
+
     
 # Using mouse clicks requires we use a global variable. The [x, y]
 # for each left-click event will be stored here
